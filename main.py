@@ -1,5 +1,7 @@
 from tkinter import *
 from pathlib import Path
+from random import randint
+import random
 
 def goto_answer():
 	welcome.destroy()
@@ -21,26 +23,33 @@ def create_new_pair(event):
 			f = open("./pairs/{0}.txt".format(proj_name.get()), "w+")
 
 		f.write("{0}|{1}\n".format(question_text.get(), answer_text.get()))
+		f.close()
 
 		# pairs counter
 		pairs_value = 0
-
 		with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
 			for line in file:
 				pairs_value += 1
 
-		Label(welcome, text="{0} pairs created".format(pairs_value + 1)).grid(row=5, column=1, sticky=SE)
+			Label(welcome, text="{0} pairs created".format(pairs_value)).grid(row=5, column=1, sticky=SE)
+			file.close()
 
 def create_task():
 	random_answers = []
+	num_of_lines = 0
 
 	with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
 		for line in file:
-			# cuts | and everything before it and \n character at the end of the line
-			ans = line[line.find("|") + 1:-1]
-			random_answers.append(ans)
-			print(random_answers)
-			# random_answers[line] = 
+			if len(random_answers) != 4:
+				num_of_lines += 1
+				# cuts '|' and everything before it and \n character at the end of the line
+				ans = line[line.find("|") + 1:-1]
+				# randomizer returns 0 or 1 every cycle and decides if current line will be used
+				randomizer = random.getrandbits(1)
+				random_answers.append(ans * randomizer)
+				# cuts out empty elements
+				random_answers = [x for x in random_answers if x != '']
+				print("PICKED:", randomizer, random_answers)
 
 
 root = Tk()
