@@ -5,59 +5,77 @@ def goto_answer():
 	welcome.destroy()
 	answer.pack()
 
-def goto_welcome(event):
+def create_new_pair(event):
 	manager.destroy()
 	welcome.pack()
 
-def create_new_pair():
 	file = Path("./pairs/{0}.txt".format(proj_name.get()))
 
-	# if file already exists append
-	if file.is_file():
-		f = open("./pairs/{0}.txt".format(proj_name.get()), "a")
+	# creates a pair only when entry boxes are not empty
+	if question_text.get() and answer_text.get():
+		# exists -> append
+		if file.is_file():
+			f = open("./pairs/{0}.txt".format(proj_name.get()), "a")
 
-	# else, create one
-	else:
-		f = open("./pairs/{0}.txt".format(proj_name.get()), "w+")
+		else:
+			f = open("./pairs/{0}.txt".format(proj_name.get()), "w+")
 
-	f.write("{0} {1}\n".format(question_text.get(), answer_text.get()))
+		f.write("{0}|{1}\n".format(question_text.get(), answer_text.get()))
+
+		# pairs counter
+		pairs_value = 0
+
+		with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
+			for line in file:
+				pairs_value += 1
+
+		Label(welcome, text="{0} pairs created".format(pairs_value + 1)).grid(row=5, column=1, sticky=SE)
+
+def create_task():
+	random_answers = []
+
+	with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
+		for line in file:
+			# cuts | and everything before it and \n character at the end of the line
+			ans = line[line.find("|") + 1:-1]
+			random_answers.append(ans)
+			print(random_answers)
+			# random_answers[line] = 
 
 
 root = Tk()
 root.title("Flashcards")
 welcome = Frame(root)
 answer = Frame(root)
-manager = Frame(root)
+manager = Frame()
 
-pairs_value = 0
 points_value = 0
 question_text = StringVar()
 answer_text = StringVar()
 proj_name = StringVar()
 
+
 # MANAGER PROJECT FORM
 Label(manager, text="Name of your new project: ").grid(row=0, column=0, sticky=W)
 Entry(manager, textvariable=proj_name, width=30).grid(row=0, column=1, ipady=5)
-root.bind("<Return>", goto_welcome)
-Label(manager, text="Press enter when done").grid(row=1, column=1, sticky=E)
+Label(manager, text="Press ENTER when done").grid(row=1, column=1, sticky=E)
 
 
 # WELCOME FORM
-Label(welcome, text="Question:").grid(row=0, column=0, sticky=W)
-Entry(welcome, textvariable=question_text, width=50).grid(row=0, column=1, ipady=5)
+Label(welcome, text="Input both question and answer then press ENTER to create a pair.").grid(row=0, column=1)
+Label(welcome, text="Question:").grid(row=1, column=0, sticky=W)
+Entry(welcome, textvariable=question_text, width=50).grid(row=1, column=1, ipady=5)
 # Label(welcome, text="{0} asdasd".format(value)).grid(row=3, column=0, sticky=W)
 
-Label(welcome).grid(row=1)
+Label(welcome).grid(row=2)
 
-Label(welcome, text="Answer:").grid(row=2, column=0, sticky=W)
-Entry(welcome, textvariable=answer_text, width=50).grid(row=2, column=1, ipady=5)
+Label(welcome, text="Answer:").grid(row=3, column=0, sticky=W)
+Entry(welcome, textvariable=answer_text, width=50).grid(row=3, column=1, ipady=5)
 
-Label(welcome).grid(row=3)
+Label(welcome).grid(row=4)
 
-# outputs how how many pairs were already created
-Label(welcome, text="{0} pairs created".format(pairs_value)).grid(row=4, column=1, sticky=SE)
-Button(welcome, text="Create next one", command=create_new_pair).grid(row=4)
-Button(welcome, text="Start learning", command=goto_answer).grid(row=4, column=1)
+root.bind("<Return>", create_new_pair)
+Button(welcome, text="Start learning", command=create_task).grid(row=5, column=1)
 
 
 # ANSWER FORM
