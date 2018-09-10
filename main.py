@@ -36,6 +36,7 @@ def create_new_pair(event):
 
 def create_task():
 	random_answers = []
+	not_picked_answers = []
 	num_of_lines = 0
 
 	with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
@@ -46,10 +47,22 @@ def create_task():
 				ans = line[line.find("|") + 1:-1]
 				# randomizer returns 0 or 1 every cycle and decides if current line will be used
 				randomizer = random.getrandbits(1)
+
+				if randomizer == 0:
+					not_picked_answers.append(ans)
+
 				random_answers.append(ans * randomizer)
 				# cuts out empty elements
 				random_answers = [x for x in random_answers if x != '']
-				print("PICKED:", randomizer, random_answers)
+				# print("PICKED:", randomizer, random_answers, "\nNOT PICKED:", not_picked_answers, num_of_lines)
+
+				if num_of_lines > 4:
+					while len(random_answers) < 4:
+						npa_list_elem = random.choice(not_picked_answers)
+						random_answers.append(npa_list_elem)
+						# print("---PICKED not_picked elem is:", random.choice(not_picked_answers))
+						print("PICKED:", random_answers)
+						not_picked_answers.remove(npa_list_elem)
 
 
 root = Tk()
