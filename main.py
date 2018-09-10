@@ -3,9 +3,6 @@ from pathlib import Path
 from random import randint
 import random
 
-def goto_answer():
-	welcome.destroy()
-	answer.pack()
 
 def create_new_pair(event):
 	manager.destroy()
@@ -36,33 +33,60 @@ def create_new_pair(event):
 
 def create_task():
 	random_answers = []
+	questions = []
+	questions_used = []
 	not_picked_answers = []
 	num_of_lines = 0
+	points_value = 0
 
 	with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
 		for line in file:
+			num_of_lines += 1
+			# cuts '|' and everything before it and \n character at the end of the line
+			ans = line[line.find("|") + 1:-1]
+			que = line[:line.find("|")]
+			questions.append(que)
+
+			# stop inserting answers into the list when it has 4 elements
 			if len(random_answers) != 4:
-				num_of_lines += 1
-				# cuts '|' and everything before it and \n character at the end of the line
-				ans = line[line.find("|") + 1:-1]
 				# randomizer returns 0 or 1 every cycle and decides if current line will be used
 				randomizer = random.getrandbits(1)
-
 				if randomizer == 0:
 					not_picked_answers.append(ans)
 
 				random_answers.append(ans * randomizer)
 				# cuts out empty elements
 				random_answers = [x for x in random_answers if x != '']
-				# print("PICKED:", randomizer, random_answers, "\nNOT PICKED:", not_picked_answers, num_of_lines)
 
 				if num_of_lines > 4:
 					while len(random_answers) < 4:
 						npa_list_elem = random.choice(not_picked_answers)
 						random_answers.append(npa_list_elem)
-						# print("---PICKED not_picked elem is:", random.choice(not_picked_answers))
-						print("PICKED:", random_answers)
 						not_picked_answers.remove(npa_list_elem)
+
+	print("PICKED:", random_answers)
+	random_question = random.choice(questions)
+
+	if random_question not in questions_used:
+		Label(answer, text=random_question).grid(row=2, column=2)
+		Label(answer).grid(row=3)
+
+		print(random_question, questions_used)
+		# don't show the same question twice
+		questions_used.append(random_question)
+
+	Label(answer, text=points_value).grid(row=0, column=0, sticky=NW)
+	Label(answer).grid(row=1)
+
+	# shuffles and outputs answers
+	random.shuffle(random_answers)
+	Button(answer, text=random_answers[0]).grid(row=4, column=0, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[1]).grid(row=4, column=1, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[2]).grid(row=4, column=2, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[3]).grid(row=4, column=3, ipady=5, ipadx=5)
+
+	welcome.destroy()
+	answer.pack()
 
 
 root = Tk()
@@ -71,7 +95,6 @@ welcome = Frame(root)
 answer = Frame(root)
 manager = Frame()
 
-points_value = 0
 question_text = StringVar()
 answer_text = StringVar()
 proj_name = StringVar()
@@ -98,20 +121,6 @@ Label(welcome).grid(row=4)
 
 root.bind("<Return>", create_new_pair)
 Button(welcome, text="Start learning", command=create_task).grid(row=5, column=1)
-
-
-# ANSWER FORM
-Label(answer, text=points_value).grid(row=0, column=0, sticky=NW)
-Label(answer).grid(row=1,)
-Label(answer, text=question_text).grid(row=2, column=2)
-
-Label(answer).grid(row=3)
-
-# randomly picked answer_value in def, only one correct
-Button(answer, text="ans1").grid(row=4, column=0, ipady=5, ipadx=5)
-Button(answer, text="ans2").grid(row=4, column=1, ipady=5, ipadx=5)
-Button(answer, text="ans3").grid(row=4, column=2, ipady=5, ipadx=5)
-Button(answer, text="ans4").grid(row=4, column=3, ipady=5, ipadx=5)
 
 manager.pack()
 root.mainloop()
