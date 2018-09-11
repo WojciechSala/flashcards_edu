@@ -36,6 +36,7 @@ def create_task():
 	questions = []
 	questions_used = []
 	not_picked_answers = []
+	pair = []
 	num_of_lines = 0
 	points_value = 0
 
@@ -43,6 +44,7 @@ def create_task():
 		for line in file:
 			num_of_lines += 1
 			# cuts '|' and everything before it and \n character at the end of the line
+			pair.append(line[:-1])
 			ans = line[line.find("|") + 1:-1]
 			que = line[:line.find("|")]
 			questions.append(que)
@@ -64,14 +66,25 @@ def create_task():
 						random_answers.append(npa_list_elem)
 						not_picked_answers.remove(npa_list_elem)
 
+	print("PAIRS:", pair)
 	print("PICKED:", random_answers)
 	random_question = random.choice(questions)
+
+	picked_pair = pair[questions.index(random_question)]
+	correct_answer = picked_pair[picked_pair.find("|") + 1:]
+	print("ANSWER IS:", correct_answer)
+
+	# put correct answer into final list if not found there
+	if correct_answer not in random_answers:
+		random_element_to_replace = random.randint(0, len(random_answers))
+		random_answers[random_element_to_replace] = correct_answer
+		random.shuffle(random_answers)
 
 	if random_question not in questions_used:
 		Label(answer, text=random_question).grid(row=2, column=2)
 		Label(answer).grid(row=3)
 
-		print(random_question, questions_used)
+		print("QUESTON IS:", random_question, questions_used)
 		# don't show the same question twice
 		questions_used.append(random_question)
 
