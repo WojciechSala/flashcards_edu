@@ -3,7 +3,6 @@ from pathlib import Path
 from random import randint
 import random
 
-
 def create_new_pair(event):
 	manager.destroy()
 	welcome.pack()
@@ -43,8 +42,9 @@ def create_task():
 	with open("./pairs/{0}.txt".format(proj_name.get()), "r") as file:
 		for line in file:
 			num_of_lines += 1
-			# cuts '|' and everything before it and \n character at the end of the line
+			# helps create question - answer links for later use
 			pair.append(line[:-1])
+			# cuts '|' and everything before it and \n character at the end of the line
 			ans = line[line.find("|") + 1:-1]
 			que = line[:line.find("|")]
 			questions.append(que)
@@ -53,13 +53,19 @@ def create_task():
 			if len(random_answers) != 4:
 				# randomizer returns 0 or 1 every cycle and decides if current line will be used
 				randomizer = random.getrandbits(1)
+				# if current line is not being used, put it into buffer 'not_picked_answers' list
 				if randomizer == 0:
 					not_picked_answers.append(ans)
 
+				# decides if current line will be in the list
 				random_answers.append(ans * randomizer)
 				# cuts out empty elements
 				random_answers = [x for x in random_answers if x != '']
 
+				"""
+				If 'random_answers' list is not full, fills it with
+				a random (not already used) answer held in 'not_picked_answers' list.
+				"""
 				if num_of_lines > 4:
 					while len(random_answers) < 4:
 						npa_list_elem = random.choice(not_picked_answers)
@@ -68,14 +74,17 @@ def create_task():
 
 	print("PAIRS:", pair)
 	print("PICKED:", random_answers)
-	random_question = random.choice(questions)
 
+	random_question = random.choice(questions)
+	# finds given question in pair list
 	picked_pair = pair[questions.index(random_question)]
+	# cuts out useless part (the question)
 	correct_answer = picked_pair[picked_pair.find("|") + 1:]
 	print("ANSWER IS:", correct_answer)
 
 	# put correct answer into final list if not found there
 	if correct_answer not in random_answers:
+		# element's index
 		random_element_to_replace = random.randint(0, len(random_answers))
 		random_answers[random_element_to_replace] = correct_answer
 		random.shuffle(random_answers)
