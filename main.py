@@ -36,6 +36,7 @@ def create_task():
 	questions_used = []
 	not_picked_answers = []
 	pair = []
+	answer_button = []
 	num_of_lines = 0
 	points_value = 0
 
@@ -100,12 +101,16 @@ def create_task():
 	Label(answer, text=points_value).grid(row=0, column=0, sticky=NW)
 	Label(answer).grid(row=1)
 
+	# grab pushed button and check if answer is correct or not
+	def check_result():
+		print(correct_answer)
+
 	# shuffles and outputs answers
 	random.shuffle(random_answers)
-	Button(answer, text=random_answers[0]).grid(row=4, column=0, ipady=5, ipadx=5)
-	Button(answer, text=random_answers[1]).grid(row=4, column=1, ipady=5, ipadx=5)
-	Button(answer, text=random_answers[2]).grid(row=4, column=2, ipady=5, ipadx=5)
-	Button(answer, text=random_answers[3]).grid(row=4, column=3, ipady=5, ipadx=5)
+	answer_button.append(Button(answer, text=random_answers[0], command=check_result).grid(row=4, column=0, ipady=5, ipadx=5))
+	answer_button.append(Button(answer, text=random_answers[1], command=check_result).grid(row=4, column=1, ipady=5, ipadx=5))
+	answer_button.append(Button(answer, text=random_answers[2], command=check_result).grid(row=4, column=2, ipady=5, ipadx=5))
+	answer_button.append(Button(answer, text=random_answers[3], command=check_result).grid(row=4, column=3, ipady=5, ipadx=5))
 
 	welcome.destroy()
 	answer.pack()
