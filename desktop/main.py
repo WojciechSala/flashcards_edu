@@ -36,7 +36,7 @@ def create_task():
 	questions_used = []
 	not_picked_answers = []
 	pair = []
-	answer_button = []
+	answer_button_text = []
 	num_of_lines = 0
 	points_value = 0
 
@@ -101,16 +101,36 @@ def create_task():
 	Label(answer, text=points_value).grid(row=0, column=0, sticky=NW)
 	Label(answer).grid(row=1)
 
-	# grab pushed button and check if answer is correct or not
-	def check_result():
-		print(correct_answer)
-
 	# shuffles and outputs answers
 	random.shuffle(random_answers)
-	answer_button.append(Button(answer, text=random_answers[0], command=check_result).grid(row=4, column=0, ipady=5, ipadx=5))
-	answer_button.append(Button(answer, text=random_answers[1], command=check_result).grid(row=4, column=1, ipady=5, ipadx=5))
-	answer_button.append(Button(answer, text=random_answers[2], command=check_result).grid(row=4, column=2, ipady=5, ipadx=5))
-	answer_button.append(Button(answer, text=random_answers[3], command=check_result).grid(row=4, column=3, ipady=5, ipadx=5))
+	ans1 = Button(answer, text=random_answers[0])
+	ans1.grid(row=4, column=0, ipady=5, ipadx=5)
+
+	ans2 = Button(answer, text=random_answers[1])
+	ans2.grid(row=4, column=1, ipady=5, ipadx=5)
+
+	ans3 = Button(answer, text=random_answers[2])
+	ans3.grid(row=4, column=2, ipady=5, ipadx=5)
+
+	ans4 = Button(answer, text=random_answers[3])
+	ans4.grid(row=4, column=2, ipady=5, ipadx=5)
+
+	# button's text
+	answer_button_text.append(ans1.cget('text'))
+	answer_button_text.append(ans2.cget('text'))
+	answer_button_text.append(ans3.cget('text'))
+	answer_button_text.append(ans4.cget('text'))
+
+	# grab pushed button and check if answer is correct or not
+	def check_result():
+		# index of correct answer in list so specific button
+		answer_button_text.index(correct_answer)
+		# !!grab pressed button and print it's text
+
+	Button(answer, text=random_answers[0], command=check_result).grid(row=4, column=0, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[1], command=check_result).grid(row=4, column=1, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[2], command=check_result).grid(row=4, column=2, ipady=5, ipadx=5)
+	Button(answer, text=random_answers[3], command=check_result).grid(row=4, column=3, ipady=5, ipadx=5)
 
 	welcome.destroy()
 	answer.pack()
